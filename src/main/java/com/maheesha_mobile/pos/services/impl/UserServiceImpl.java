@@ -1,5 +1,6 @@
 package com.maheesha_mobile.pos.services.impl;
 
+import com.maheesha_mobile.pos.dto.LoginDto;
 import com.maheesha_mobile.pos.dto.UserDto;
 import com.maheesha_mobile.pos.model.UserEntity;
 import com.maheesha_mobile.pos.repo.UserRepo;
@@ -10,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -67,11 +67,29 @@ public class UserServiceImpl implements UserService {
         logger.info("Method Executing Completed In assignValueUserEntity |userEntity={}", userEntity);
         return userEntity;
     }
-
-    public List<UserEntity> getAllUserDetails(){
-        logger.info("Method Executing Starting In getAllUserDetails");
-        List<UserEntity> allUserDetails = userRepo.findAll();
-        logger.info("Method Executing Completed In getAllUserDetails |allDetails={}",allUserDetails);
-        return allUserDetails;
+    public String validateUser(LoginDto loginDto){
+        // Password = "Maheesha123"
+        logger.info("Method Executing Starting In validateUser");
+        Optional<UserEntity> byUserEmail = userRepo.findByUserEmail(loginDto.getUserEmail());
+        if (byUserEmail.isPresent()){
+            if (byUserEmail.get().getEmail().equals(loginDto.getUserEmail())){
+                if(passwordEncoder.matches(loginDto.getPassword(),byUserEmail.get().getPassword())){
+                    return "User credential is correct";
+                }else{
+                    return("User password is incorrect: ");
+                }
+            }
+            return null;
+        }else{
+            return("User not found with username: " + loginDto.getUserName());
+        }
+    }
+    public String forgotPassword(String userEmail,String newPassword){
+        Optional<UserEntity> byUserEmail = userRepo.findByUserEmail(userEmail);
+        if(byUserEmail.isPresent()){
+            userRepo.updateUserPassword(userEmail,passwordEncoder.encode(newPassword));
+            return "Forgot Password Successfully";
+        }
+        return("User not found with username: " + userEmail);
     }
 }

@@ -1,8 +1,20 @@
 package com.maheesha_mobile.pos.constant;
 
 public class APIConstants {
-    public static final String API_ROOT = "api/com-angular";
+
+    // User api list
+
+    public static final String API_ROOT = "api/com-maheesha-mobile";
+    public static final String USER_LOGIN = "/auth/login";
     public static final String CREATE_USER = "/create-user";
-    public static final String CREATE_ACCESS_TOKEN = "/auth/token";
-    public static final String GET_ALL_USERS = "/get-all-users";
+    public static final String REFRESH_ACCESS_TOKEN = "/auth/refresh-token";
+    public static final String FORGOT_PASSWORD = "/auth/forgot";
+
+    // Product api list
+
+    public static final String ADD_NEW_PRODUCT = "/add-product";
+    public static final String VIEW_ALL_PRODUCT = "/view-product";
+    public static final String DELETE_SINGLE_PRODUCT = "/delete-product";
+    public static final String UPDATE_SINGLE_PRODUCT = "/update-product";
+    public static final String GET_UNIQUE_PRODUCTS = "/get-product-by-category";
 }
