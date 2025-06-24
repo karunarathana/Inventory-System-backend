@@ -2,6 +2,9 @@ package com.maheesha_mobile.pos.controller;
 
 import com.maheesha_mobile.pos.constant.APIConstants;
 import com.maheesha_mobile.pos.dto.LoginDto;
+import com.maheesha_mobile.pos.dto.UserDto;
+import com.maheesha_mobile.pos.model.UserEntity;
+import com.maheesha_mobile.pos.response.user.CreateUserResponse;
 import com.maheesha_mobile.pos.services.JwtService;
 import com.maheesha_mobile.pos.services.UserService;
 import org.slf4j.Logger;
@@ -10,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -23,6 +27,13 @@ public class UserController {
     public UserController(JwtService jwtService, UserService userService) {
         this.jwtService = jwtService;
         this.userService = userService;
+    }
+    @RequestMapping(value = APIConstants.CREATE_USER, method = RequestMethod.POST)
+    public ResponseEntity<?> createUser(@RequestBody UserDto userDto) {
+        logger.info("Request Started In createUser |UserDto={} ", userDto);
+        CreateUserResponse response = userService.createUser(userDto);
+        logger.info("Request Completed In createUser |response={} ", response);
+        return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
 
     @RequestMapping(value = APIConstants.REFRESH_ACCESS_TOKEN, method = RequestMethod.POST)
@@ -69,5 +80,15 @@ public class UserController {
                 "Status", "Successfully",
                 "Description", response
         ));
+    }
+    @RequestMapping(value = APIConstants.USER_SEARCH_ALL, method = RequestMethod.GET)
+    public ResponseEntity<?> getAllUser() {
+        logger.info("Request Started In getUserLogin");
+        List<UserEntity> response = userService.getAllUsers();
+//        return ResponseEntity.ok(Map.of(
+//                "Status", "Successfully",
+//                "Description", "User login endpoint is working"
+//        ));
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -91,5 +92,11 @@ public class UserServiceImpl implements UserService {
             return "Forgot Password Successfully";
         }
         return("User not found with username: " + userEmail);
+    }
+
+    @Override
+    public List<UserEntity> getAllUsers() {
+        List<UserEntity> allUsers = userRepo.findAll();
+        return allUsers;
     }
 }
