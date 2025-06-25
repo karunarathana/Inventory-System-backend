@@ -4,7 +4,9 @@ import com.maheesha_mobile.pos.dto.LoginDto;
 import com.maheesha_mobile.pos.dto.UserDto;
 import com.maheesha_mobile.pos.model.UserEntity;
 import com.maheesha_mobile.pos.repo.UserRepo;
+import com.maheesha_mobile.pos.response.login.LoginResponse;
 import com.maheesha_mobile.pos.response.user.CreateUserResponse;
+import com.maheesha_mobile.pos.services.JwtService;
 import com.maheesha_mobile.pos.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +21,12 @@ public class UserServiceImpl implements UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     private final UserRepo userRepo;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public UserServiceImpl(UserRepo userRepo, BCryptPasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepo userRepo, BCryptPasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -68,35 +72,56 @@ public class UserServiceImpl implements UserService {
         logger.info("Method Executing Completed In assignValueUserEntity |userEntity={}", userEntity);
         return userEntity;
     }
-    public String validateUser(LoginDto loginDto){
+
+    public LoginResponse validateUser(LoginDto loginDto) {
         // Password = "Maheesha123"
         logger.info("Method Executing Starting In validateUser");
+        LoginResponse response = new LoginResponse();
         Optional<UserEntity> byUserEmail = userRepo.findByUserEmail(loginDto.getUserEmail());
-        if (byUserEmail.isPresent()){
-            if (byUserEmail.get().getEmail().equals(loginDto.getUserEmail())){
-                if(passwordEncoder.matches(loginDto.getPassword(),byUserEmail.get().getPassword())){
-                    return "User credential is correct";
-                }else{
-                    return("User password is incorrect: ");
+        if (byUserEmail.isPresent()) {
+            if (byUserEmail.get().getEmail().equals(loginDto.getUserEmail())) {
+                if (passwordEncoder.matches(loginDto.getPassword(), byUserEmail.get().getPassword())) {
+                    String newAccessToken = jwtService.generateAccessToken(byUserEmail.get().getUserName());
+                    String newRefreshToken = jwtService.generateRefreshToken(byUserEmail.get().getUserName());
+
+                    response.setMessage("User credential is correct");
+                    response.setNewAccessToken(newAccessToken);
+                    response.setNewRefreshToken(newRefreshToken);
+                    response.setUsername(byUserEmail.get().getUserName());
+                    return response;
+                } else {
+                    response.setMessage("User password is incorrect: ");
+                    return response;
                 }
             }
             return null;
-        }else{
-            return("User not found with username: " + loginDto.getUserName());
+        } else {
+            logger.warn("User not found with userEmail: {}", loginDto.getUserEmail());
+            response.setMessage("User not found with userEmail");
+            return response;
         }
     }
-    public String forgotPassword(String userEmail,String newPassword){
+
+    public String forgotPassword(String userEmail, String newPassword) {
         Optional<UserEntity> byUserEmail = userRepo.findByUserEmail(userEmail);
-        if(byUserEmail.isPresent()){
-            userRepo.updateUserPassword(userEmail,passwordEncoder.encode(newPassword));
+        if (byUserEmail.isPresent()) {
+            userRepo.updateUserPassword(userEmail, passwordEncoder.encode(newPassword));
             return "Forgot Password Successfully";
         }
-        return("User not found with username: " + userEmail);
+        return ("User not found with username: " + userEmail);
     }
 
     @Override
     public List<UserEntity> getAllUsers() {
         List<UserEntity> allUsers = userRepo.findAll();
         return allUsers;
+    }
+
+    @Override
+    public String deleteUser(int userId) {
+        logger.info("Method Executing Starting In deleteUser | userId={}", userId);
+        userRepo.deleteById(userId);
+        logger.info("Method Executing Completed In deleteUser | userId={}", userId);
+        return "User Deleted Successfully";
     }
 }

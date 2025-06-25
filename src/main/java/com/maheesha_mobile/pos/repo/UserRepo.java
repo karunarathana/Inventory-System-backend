@@ -13,6 +13,9 @@ public interface UserRepo extends JpaRepository<UserEntity,Integer> {
     @Query(value = "SELECT * FROM t_user WHERE email = :userEmail", nativeQuery = true)
     Optional<UserEntity> findByUserEmail(String userEmail);
 
+    @Query(value = "SELECT * FROM t_user WHERE user_name = :userName", nativeQuery = true)
+    Optional<UserEntity> findByUserName(String userName);
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE t_user SET password = :password WHERE email = :userEmail", nativeQuery = true)

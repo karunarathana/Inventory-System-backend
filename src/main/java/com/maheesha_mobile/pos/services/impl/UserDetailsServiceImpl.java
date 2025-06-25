@@ -22,7 +22,8 @@ public class UserDetailsServiceImpl implements org.springframework.security.core
 
     @Override
     public org.springframework.security.core.userdetails.UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = foundUserDetails(1);
+        System.out.println("loadUserByUsername called with username: " + username);
+        UserEntity userEntity = foundUserDetails(username);
         if (!userEntity.getUserName().equals(username)) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
@@ -39,8 +40,9 @@ public class UserDetailsServiceImpl implements org.springframework.security.core
                 authorities
         );
     }
-    private UserEntity foundUserDetails(int userID){
-        Optional<UserEntity> details = userRepo.findById(userID);
+    private UserEntity foundUserDetails(String userName){
+        Optional<UserEntity> details = userRepo.findByUserName(userName);
+        System.out.println(details.get().getUserId());
         return details.get();
     }
 }

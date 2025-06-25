@@ -4,6 +4,7 @@ import com.maheesha_mobile.pos.constant.APIConstants;
 import com.maheesha_mobile.pos.dto.LoginDto;
 import com.maheesha_mobile.pos.dto.UserDto;
 import com.maheesha_mobile.pos.model.UserEntity;
+import com.maheesha_mobile.pos.response.login.LoginResponse;
 import com.maheesha_mobile.pos.response.user.CreateUserResponse;
 import com.maheesha_mobile.pos.services.JwtService;
 import com.maheesha_mobile.pos.services.UserService;
@@ -54,21 +55,9 @@ public class UserController {
     @RequestMapping(value = APIConstants.USER_LOGIN, method = RequestMethod.POST)
     public ResponseEntity<?> validateUser(@RequestBody LoginDto loginDto) {
         logger.info("Request Started In validateUser |LoginDto={} ", loginDto);
-        String response = userService.validateUser(loginDto);
+        LoginResponse response = userService.validateUser(loginDto);
         logger.info("Request Completed In validateUser |response={} ", response);
-        if(!response.equals("User credential is correct")){
-            return ResponseEntity.ok(Map.of(
-                    "Status", "Successfully",
-                    "Description", response
-            ));
-        }
-        String newAccessToken = jwtService.generateAccessToken(loginDto.getUserName());
-        String newRefreshToken = jwtService.generateRefreshToken(loginDto.getUserName());
-        logger.info("Request Completed In validateUser |response={} ", response);
-        return ResponseEntity.ok(Map.of(
-                "accessToken", newAccessToken,
-                "refreshToken", newRefreshToken
-        ));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @RequestMapping(value = APIConstants.FORGOT_PASSWORD, method = RequestMethod.POST)
@@ -85,10 +74,12 @@ public class UserController {
     public ResponseEntity<?> getAllUser() {
         logger.info("Request Started In getUserLogin");
         List<UserEntity> response = userService.getAllUsers();
-//        return ResponseEntity.ok(Map.of(
-//                "Status", "Successfully",
-//                "Description", "User login endpoint is working"
-//        ));
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+    @RequestMapping(value = APIConstants.DELETE_USER, method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteSingleUser(@RequestParam int userId) {
+        logger.info("Request Started In deleteSingleUser |userId={} ", userId);
+        String response = userService.deleteUser(userId);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }
