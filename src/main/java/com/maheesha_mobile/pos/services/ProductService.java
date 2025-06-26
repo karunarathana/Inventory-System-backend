@@ -11,4 +11,5 @@ public interface ProductService {
     String deleteProductById(int id);
     List<ProductEntity> viewAllProduct();
     ProductEntity viewSingleProductById(int id);
+    List<ProductEntity> viewAllProductByCategoryName(String categoryName);
 }

@@ -28,7 +28,7 @@ public class ProductServiceImpl implements ProductService {
         ProductEntity savedResponse = productRepo.save(convertProductToProductEntity(0,productDto,"Create"));
         if(savedResponse != null && savedResponse.getProductID() != null){
            logger.info("Product saved successfully: " + savedResponse.getProductID());
-           return "Product saved successfully: " + savedResponse.getProductID();
+           return "Product saved successfully";
         }
         logger.info("Method Executing Completed In addNewProduct savedResponse={}",savedResponse);
         return "Failed to save product: " + savedResponse.getProductID();
@@ -37,32 +37,31 @@ public class ProductServiceImpl implements ProductService {
         logger.info("Method Executing Start In convertProductToProductEntity |productDto={}",productDto);
         ProductEntity productEntity = new ProductEntity();
         if(methodName.equals("Create")){
-            productEntity.setProductName("Samsung Galaxy A54");
-            productEntity.setProductDescription("Latest Samsung mid-range phone with AMOLED display");
-            productEntity.setProductPrice("120000");
-            productEntity.setDiscountPrice("10000");
-            productEntity.setLastPrice("110000"); // productPrice - discountPrice
-            productEntity.setBrandName("Samsung");
+            productEntity.setProductName(productDto.getProductName());
+            productEntity.setProductDescription(productDto.getProductDescription());
+            productEntity.setProductPrice(productDto.getProductPrice());
+            productEntity.setDiscountPrice(productDto.getDiscountPrice());
+            productEntity.setLastPrice(productDto.getLastPrice()); // productPrice - discountPrice
+            productEntity.setBrandName(productDto.getBrandName());
             productEntity.setProductCreateData(new Date(System.currentTimeMillis()));
-            productEntity.setProductCategory("Smartphone");
-            productEntity.setProductColor("Black");
-            productEntity.setOthers("Includes fast charger and case");
-            productEntity.setProductStock("15");
-            productEntity.setWarrantyPeriod("1 year");
+            productEntity.setProductCategory(productDto.getProductCategory());
+            productEntity.setProductColor(productDto.getProductColor());
+            productEntity.setOthers(productDto.getOthers());
+            productEntity.setProductStock(productDto.getProductStock());
+            productEntity.setWarrantyPeriod(productDto.getWarrantyPeriod().concat("Year"));
         } else if (methodName.equals("Update")) {
-            productEntity.setProductID(updateId);
-            productEntity.setProductName("Samsung Galaxy A54");
-            productEntity.setProductDescription("Latest Samsung mid-range phone with AMOLED display");
-            productEntity.setProductPrice("120000");
-            productEntity.setDiscountPrice("10000");
-            productEntity.setLastPrice("110000"); // productPrice - discountPrice
-            productEntity.setBrandName("Samsung");
+            productEntity.setProductName(productDto.getProductName());
+            productEntity.setProductDescription(productDto.getProductDescription());
+            productEntity.setProductPrice(productDto.getProductPrice());
+            productEntity.setDiscountPrice(productDto.getDiscountPrice());
+            productEntity.setLastPrice(productDto.getLastPrice()); // productPrice - discountPrice
+            productEntity.setBrandName(productDto.getBrandName());
             productEntity.setProductCreateData(new Date(System.currentTimeMillis()));
-            productEntity.setProductCategory("Smartphone");
-            productEntity.setProductColor("Black");
-            productEntity.setOthers("Includes fast charger and case");
-            productEntity.setProductStock("15");
-            productEntity.setWarrantyPeriod("1 year");
+            productEntity.setProductCategory(productDto.getProductCategory());
+            productEntity.setProductColor(productDto.getProductColor());
+            productEntity.setOthers(productDto.getOthers());
+            productEntity.setProductStock(productDto.getProductStock());
+            productEntity.setWarrantyPeriod(productDto.getWarrantyPeriod().concat("Year"));
         }
         else{
             logger.info("Invalid method name");
@@ -104,5 +103,17 @@ public class ProductServiceImpl implements ProductService {
         Optional<ProductEntity> byproductId = productRepo.findByproductId(id);
         logger.info("Method Executing Completed In viewSingleProductById product={}",byproductId.get());
         return byproductId.get();
+    }
+
+    @Override
+    public List<ProductEntity> viewAllProductByCategoryName(String categoryName) {
+    logger.info("Method Executing Start In viewAllProductByCategoryName categoryName={}", categoryName);
+    List<ProductEntity> productsByCategory = productRepo.findByProductCategory(categoryName);
+    logger.info("Method Executing Completed In viewAllProductByCategoryName products={}", productsByCategory);
+    if (productsByCategory != null && !productsByCategory.isEmpty()) {
+        return productsByCategory;
+    }
+    logger.info("No products found for category: {}", categoryName);
+    return List.of();
     }
 }

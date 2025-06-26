@@ -19,4 +19,5 @@ public class APIConstants {
     public static final String DELETE_SINGLE_PRODUCT = "/delete-product";
     public static final String UPDATE_SINGLE_PRODUCT = "/update-product";
     public static final String GET_UNIQUE_PRODUCTS = "/get-product-by-category";
+    public static final String VIEW_ALL_PRODUCT_BY_CATEGORY = "/view-product-by-category";
 }

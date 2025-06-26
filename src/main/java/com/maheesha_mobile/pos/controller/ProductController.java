@@ -28,7 +28,7 @@ public class ProductController {
     public ResponseEntity<?> addNewProduct(@RequestBody ProductDto productDto) {
         logger.info("Request Started In addNewProduct |productDto={} ", productDto);
         String response = productService.addNewProduct(productDto);
-        logger.info("Request Complete In addNewProduct |AccessToken={} ", response);
+        logger.info("Request Complete In addNewProduct |response={} ", response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @RequestMapping(value = APIConstants.VIEW_ALL_PRODUCT, method = RequestMethod.GET)
@@ -69,6 +69,17 @@ public class ProductController {
         logger.info("Request Started In viewSingleProduct |id={}",id);
         ProductEntity response = productService.viewSingleProductById(id);
         logger.info("Request Complete In viewSingleProduct |response={} ", response);
+        return ResponseEntity.ok(Map.of(
+                "totalItem","Test",
+                "totalPages","Test",
+                "items", response
+        ));
+    }
+    @RequestMapping(value = APIConstants.VIEW_ALL_PRODUCT_BY_CATEGORY, method = RequestMethod.GET)
+    public ResponseEntity<?> viewAllProductByCategoryName(@RequestParam("category") String category) {
+        logger.info("Request Started In viewAllProductByCategoryName |CategoryName={}",category);
+        List<ProductEntity> response = productService.viewAllProductByCategoryName(category);
+        logger.info("Request Complete In viewAllProductByCategoryName |response={} ", response);
         return ResponseEntity.ok(Map.of(
                 "totalItem","Test",
                 "totalPages","Test",
