@@ -2,13 +2,15 @@ package com.maheesha_mobile.pos.model;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 
 @Entity
 @Table(name = "t_user")
-public class UserEntity {
+public class UserEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userId;
+    private int userId; //long id
     private String userName;
     private String email;
     private String password;

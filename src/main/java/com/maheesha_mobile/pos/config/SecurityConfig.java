@@ -31,7 +31,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(r -> r
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // ✅ Fixed line
-                        .requestMatchers("api/com-maheesha-mobile/auth/login").permitAll()
+                        .requestMatchers("api/com-maheesha-mobile/auth/login","api/com-maheesha-mobile/create-user").permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers
