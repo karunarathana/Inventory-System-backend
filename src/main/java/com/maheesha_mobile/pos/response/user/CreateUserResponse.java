@@ -1,6 +1,8 @@
 package com.maheesha_mobile.pos.response.user;
 
-public class CreateUserResponse {
+import java.io.Serializable;
+
+public class CreateUserResponse implements Serializable {
     private String responseMessage;
     private String responseCode;
 

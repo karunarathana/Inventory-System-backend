@@ -1,10 +1,11 @@
 package com.maheesha_mobile.pos.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.Date;
 
-
+@Data
 @Entity
 @Table(name = "t_product")
 public class ProductEntity {

@@ -8,8 +8,11 @@ import com.maheesha_mobile.pos.response.login.LoginResponse;
 import com.maheesha_mobile.pos.response.user.CreateUserResponse;
 import com.maheesha_mobile.pos.services.JwtService;
 import com.maheesha_mobile.pos.services.UserService;
+import lombok.extern.java.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +32,8 @@ public class UserServiceImpl implements UserService {
         this.jwtService = jwtService;
     }
 
+
+    @CachePut(value = "users",key = "#userDto.userEmail")
     @Override
     public CreateUserResponse createUser(UserDto userDto) {
         logger.info("Method Executing Starting In createUser | userDTO={}", userDto);
@@ -123,5 +128,13 @@ public class UserServiceImpl implements UserService {
         userRepo.deleteById(userId);
         logger.info("Method Executing Completed In deleteUser | userId={}", userId);
         return "User Deleted Successfully";
+    }
+
+    @Cacheable(value = "user",key = "#userId")
+    private UserEntity getUserByUserId(LoginDto loginDto){
+        logger.info("Method Executing Starting In getUserByUserId |UserEmail={}",loginDto.getUserEmail());
+        Optional<UserEntity> byUserEmail = userRepo.findByUserEmail(loginDto.getUserEmail());
+        logger.info("Method Executing Completed In getUserByUserId |UserDetails={}",byUserEmail);
+        return byUserEmail.get();
     }
 }
